@@ -15,6 +15,7 @@ jobs:
         sha: ${{ github.event.client_payload.sha }}
         run_id: ${{ github.run_id }}
         name: ${{ github.workflow }} # Default: name of workflow. This name is shown with the check, but can be changed.
+        documentation: https://github.com/Cray-HPE/license-checker
 
     - name: Checkout
       uses: actions/checkout@v2
