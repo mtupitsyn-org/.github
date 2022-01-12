@@ -26,6 +26,7 @@ jobs:
 
     - name: License Check
       uses: docker://artifactory.algol60.net/csm-docker/stable/license-checker:latest
+      continue-on-error: true
 
     - name: Dump GitHub context
       env:
