@@ -51,7 +51,7 @@ jobs:
 
     - name: Report license check result
       env:
-        GITHUB_SECRET: $${{ github.secret }}
+        GITHUB_TOKEN: $${{ github.secret }}
       run: |
         gh api -X POST repos/${{ github.event.client_payload.repository.full_name }}/statuses/${{ github.event.client_payload.sha }} \
             -f state=${{ steps.license_check.outcome }}
