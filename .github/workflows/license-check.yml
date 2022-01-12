@@ -48,3 +48,11 @@ jobs:
       env:
         STEPS_CONTEXT: ${{ toJSON(steps) }}
       run: echo "$STEPS_CONTEXT"
+
+    - name: Report license check result
+      run: |
+        gh api -X POST repos/${{ github.event.client_payload.repository.full_name }}/statuses/${{ github.event.client_payload.sha }} \
+            -f state=${{ steps.license_check.outcome }}
+            -f context=license-check
+            -f description=${{ steps.license_check.outcome }}
+            -f target_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
