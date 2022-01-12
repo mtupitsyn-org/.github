@@ -25,8 +25,14 @@ jobs:
         token: ${{ github.event.client_payload.token }}
 
     - name: License Check
+      id: license_check
       uses: docker://artifactory.algol60.net/csm-docker/stable/license-checker:latest
       continue-on-error: true
+
+    - name: Debug steps
+      env:
+        STEPS_OUTCOME: ${{ steps.license_check.outcome }}
+      run: printenv | sort
 
     - name: Dump GitHub context
       env:
