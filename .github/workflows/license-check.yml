@@ -33,6 +33,8 @@ jobs:
     - name: License Check
       id: license_check
       uses: docker://artifactory.algol60.net/csm-docker/stable/license-checker:latest
+      with:
+        args: ${{ steps.build_changeset.outputs.changeset }}
       continue-on-error: true
 
     - name: Debug steps
