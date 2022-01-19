@@ -24,11 +24,13 @@ jobs:
         ref: ${{ github.event.client_payload.sha }}
         token: ${{ github.event.client_payload.token }}
         fetch-depth: 0
+      continue-on-error: true
 
     - name: Build List of Changed Files
       id: build_changeset
       run: |
           echo "::set-output name=changeset::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.client_payload.event.before }}..${{ github.event.client_payload.event.after }} | xargs)"
+      continue-on-error: true
 
     - name: License Check
       id: license_check
@@ -42,6 +44,7 @@ jobs:
         STEPS_LICENSECHECK_OUTCOME: ${{ steps.license_check.outcome }}
         STEPS_CHANGESET_OUPUT: ${{ steps.build_changeset.outputs.changeset }}
       run: printenv | sort
+      continue-on-error: true
 
     - name: Dump GitHub context
       env:
@@ -58,12 +61,12 @@ jobs:
         STEPS_CONTEXT: ${{ toJSON(steps) }}
       run: echo "$STEPS_CONTEXT"
 
-    - name: Report license check result
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh api -X POST repos/${{ github.event.client_payload.repository.full_name }}/statuses/${{ github.event.client_payload.sha }} \
-            -f state=${{ steps.license_check.outcome }} \
-            -f context=license-check \
-            -f description=${{ steps.license_check.outcome }} \
-            -f target_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    # - name: Report license check result
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     gh api -X POST repos/${{ github.event.client_payload.repository.full_name }}/statuses/${{ github.event.client_payload.sha }} \
+    #         -f state=${{ steps.license_check.outcome }} \
+    #         -f context=license-check \
+    #         -f description=${{ steps.license_check.outcome }} \
+    #         -f target_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
