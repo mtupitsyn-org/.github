@@ -30,7 +30,7 @@ jobs:
     - name: Build List of Changed Files
       id: build_changeset
       run: |
-          echo "::set-output name=changeset::${{ join(github.event.client_payload.event.commits.*.added, ' ') }} ${{ join(github.event.client_payload.event.commits.*.modified, ' ') }}"
+          echo "::set-output name=changeset::${{ join(github.event.client_payload.event.commits.*.added.*, ' ') }} ${{ join(github.event.client_payload.event.commits.*.modified.*, ' ') }}"
       continue-on-error: true
 
     - name: License Check
