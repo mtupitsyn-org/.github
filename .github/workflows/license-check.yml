@@ -21,7 +21,7 @@ jobs:
     - name: Build List of Changed Files
       id: build_changeset
       run: |
-          changeset=${{ join(github.event.client_payload.event.commits.*.added.*, ' ') }} ${{ join(github.event.client_payload.event.commits.*.modified.*, ' ') }}
+          changeset=$(echo "${{ join(github.event.client_payload.event.commits.*.added.*, ' ') }} ${{ join(github.event.client_payload.event.commits.*.modified.*, ' ') }}" | xargs)
           if [ -z "${changeset}" ]; then
               echo "::notice::No changed files, skipping license check"
           fi
