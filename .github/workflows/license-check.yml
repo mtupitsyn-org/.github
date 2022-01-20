@@ -23,13 +23,14 @@ jobs:
         repository: ${{ github.event.client_payload.repository.full_name }}
         ref: ${{ github.event.client_payload.sha }}
         token: ${{ github.event.client_payload.token }}
-        fetch-depth: 0
+        # fetch-depth: 0
       continue-on-error: true
 
+    # echo "::set-output name=changeset::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.client_payload.event.before }}..${{ github.event.client_payload.event.after }} | xargs)"
     - name: Build List of Changed Files
       id: build_changeset
       run: |
-          echo "::set-output name=changeset::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.client_payload.event.before }}..${{ github.event.client_payload.event.after }} | xargs)"
+          echo "::set-output name=changeset::${{ join(github.event.client_payload.event.commits.*.added, ' ') }} ${{ join(github.event.client_payload.event.commits.*.modified, ' ') }}"
       continue-on-error: true
 
     - name: License Check
