@@ -17,20 +17,21 @@ jobs:
         name: ${{ github.workflow }} # Default: name of workflow. This name is shown with the check, but can be changed.
         documentation: https://github.com/Cray-HPE/license-checker
 
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        repository: ${{ github.event.client_payload.repository.full_name }}
-        ref: ${{ github.event.client_payload.sha }}
-        token: ${{ github.event.client_payload.token }}
-        # fetch-depth: 0
-      continue-on-error: true
-
     # echo "::set-output name=changeset::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.client_payload.event.before }}..${{ github.event.client_payload.event.after }} | xargs)"
     - name: Build List of Changed Files
       id: build_changeset
       run: |
           echo ::set-output name=changeset::${{ join(github.event.client_payload.event.commits.*.added.*, ' ') }} ${{ join(github.event.client_payload.event.commits.*.modified.*, ' ') }}
+      continue-on-error: true
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      if: ${{ steps.build_changeset.outputs.changeset }}
+      with:
+        repository: ${{ github.event.client_payload.repository.full_name }}
+        ref: ${{ github.event.client_payload.sha }}
+        token: ${{ github.event.client_payload.token }}
+        # fetch-depth: 0
       continue-on-error: true
 
     - name: License Check
